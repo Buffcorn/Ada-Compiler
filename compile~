@@ -1,0 +1,18 @@
+# Script to compile
+
+lex_file="ada.l"
+yacc_file="ada.y"
+output="test"
+input="./TESTS/final.ada"
+
+yacc -d -v $yacc_file
+echo "Compiling $yacc_file"
+lex $lex_file
+echo "Compiling $lex_file"
+/usr/bin/gcc lex.yy.c y.tab.c -o $output -ll -ly
+echo "Input is $input"
+./$output < $input
+echo " "
+echo "Output File Print:"
+cat simple.out
+

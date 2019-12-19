@@ -1,0 +1,261 @@
+/*
+ Itaru Fujiwara
+ Biary Tree
+
+ Taken from https://www.learn-c.org/en/Binary_trees
+ */
+
+#include <limits.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#define MAX 20
+
+// Declare variablesu
+//void Question();
+void Push(char temp[]);
+void Pop();
+void Add();
+void Local();
+void Search(char String[]);
+int i = -1;
+
+typedef struct node {
+  char var[MAX];
+  struct node *left;
+  struct node *right;
+
+  char kind [MAX];
+  char name [MAX];
+  char mode [MAX];
+
+  struct node * parent_type;
+  struct node * next;
+  struct node * component_type;
+
+  int value;
+  int lower;
+  int upper;
+} node_t;
+
+node_t * create_new_node () {
+  node_t * new_node;
+  new_node = (node_t*)malloc(sizeof(node_t));
+  strcpy(new_node->var, " ");
+  new_node->left = NULL;
+  new_node->right = NULL;
+
+  strcpy(new_node->kind, " ");
+  strcpy(new_node->name, " ");
+  strcpy(new_node->mode, " ");
+
+  new_node->parent_type = NULL;
+  new_node->next = NULL;
+  new_node->component_type = NULL;
+
+  new_node->value = 0;
+  new_node->lower = 0;
+  new_node->upper = 0;
+}
+
+typedef struct ArrStack {
+  char Key [20];
+  node_t *Root;
+} ArrStack_t;
+
+node_t * insert(node_t * subRoot, char Temp[]);
+node_t * RecursiveSearch(node_t * subRoot, char Temp[]);
+void printDFS(node_t *current);
+
+// Declare array of struct size MAX
+ArrStack_t arr[MAX];
+//Declare struct of node
+node_t *Tree;
+
+//int main() {
+// Question();
+//}
+
+/* void Question() { */
+/*   char input; */
+/*   // Asks the User what action they want to take */
+/*   printf("------------------------------------------------------------------------------\n"); */
+/*   printf( "U. PUSH\n" ); */
+/*   printf( "O. POP\n" ); */
+/*   printf( "A. ADD\n" ); */
+/*   printf( "L. LOCAL SEARCH\n" ); */
+/*   printf( "S. SEARCH\n" ); */
+/*   printf( "P. PRINT\n"); */
+/*   printf( "Q. QUIT\n" ); */
+/*   printf( "Please enter the letter corresponding to the action.\n" ); */
+/*   scanf( "%s", &input ); */
+/*   // depending on the user input it goes to a case. */
+/*   switch ( input ) { */
+/*   case 'U': case 'u': */
+/*     printf("Enter name: "); */
+/*     scanf("%s", arr[i].Key); //input the name into arr[i].key at position i. */
+/*     Push(arr[i].Key); */
+/*     break; */
+/*   case 'O': case 'o': */
+/*     Pop(); */
+/*     break; */
+/*   case 'A': case 'a': */
+/*     printf("Enter a String: \n"); */
+/*     char String[20]; */
+/*     scanf("%s", String); */
+/*     Add(String); */
+/*   break;  case 'L': case 'l': */
+/*     Local(); */
+/*     break; */
+/*   case 'S': case 's': */
+/*     Search(); */
+/*     break; */
+/*   case 'P': case 'p': */
+/*     printf("-----Printing the Tree-----\n"); */
+/*     printDFS(arr[i].Root); */
+/*     printf("\n"); */
+/*     Question(); */
+/*     break; */
+/*   case 'Q': case 'q': */
+/*     printf( "Thanks, we are now quitting.\n" ); */
+/*     exit(0); */
+/*     break; */
+/*   default: */
+/*     printf( "Not a valid input\n" ); */
+/*     Question(); */
+/*     break; */
+/*   } */
+/* } */
+
+//Push Function
+void Push(char temp[]) {
+  if(i == MAX) { //Check if Stack is full.
+    printf("Message: Stack is full!!\n");
+    Question();
+  } else {
+    i = i+1; //Add one to the Stack.
+    strcpy(arr[i].Key, temp);
+    //printf("Message: Pushed tree %s onto the stack. \n", arr[i].Key);
+    arr[i].Root = NULL; //Set the new stack to NULL.
+    //Question();
+  }
+}
+
+//Pop Function
+void Pop() {
+  if(i==-1)	{ //Check if the stack isnt empty.
+    printf("Message: Stack is empty!!\n");
+    Question();
+  } else { // Remove the top most stack from the array.
+    printf("Message: Deleted %s from the stack\n", arr[i].Key);
+    i=i-1;
+    Question();
+  }
+}
+
+//Add Function
+void Add(char Temp[]) {
+  if (i < 0) { //Check if the array is empty.
+    printf("Message: Stack is empty. Please push a tree onto the stack.\n");
+    Question();
+  } else { // Push a string into the stack.
+    arr[i].Root = insert(arr[i].Root, Temp); // call insert and have Root point to what it returns.
+    //Question();
+  }
+}
+
+//Insert Function
+node_t * insert(node_t * subRoot, char Temp[]) {
+  if (subRoot == NULL) { //Check if the node is empty.
+    subRoot = (node_t *)malloc(sizeof(node_t)); //Allocate space for subroot.
+    strcpy(subRoot -> var, Temp); // copy string into var.
+    subRoot -> left = NULL;
+    subRoot -> right = NULL;
+    //printf("Message: Successfully added symbol %s to the tree %s. \n", Temp, arr[i].Key);
+  } else if (strcmp(Temp, subRoot -> var) < 0) { //insert into left subroot.
+    subRoot -> left = insert(subRoot -> left, Temp);
+  } else if (strcmp(Temp, subRoot -> var) > 0) {
+    subRoot -> right = insert(subRoot -> right, Temp); //insert into right subroot.
+  } else {
+    printf("Message: The symbol %s you typed is already in the binary tree.\n", Temp);
+    return NULL;
+  }
+  return subRoot;
+}
+
+//Local Search
+void Local() {
+  if (i < 0) { //Check if stack is empty.
+    //printf("Message: Stack is empty. Please push a tree onto the stack.\n");
+    Question();
+  } else {
+    char String[20];
+    node_t * outcome;
+    //printf("The Local Tree is: %s \n", arr[i].Key);
+    //printf("Enter String you would like to search: \n");
+    scanf("%s", String);
+    outcome = RecursiveSearch(arr[i].Root, String); //outcome points to the resulrt of RecursiveSearch.
+    if (outcome != NULL) {
+      //printf("Message: The symbol %s is in the local tree %s.\n", String, arr[i].Key);
+      Question();
+    } else {
+      //printf("Message: The symbol %s does not exist in the local tree %s. \n", String, arr[i]. Key);
+    }
+    Question();
+  }
+}
+
+// Recursive Search
+node_t * RecursiveSearch(node_t * subRoot, char Temp[]) {
+  if (subRoot == NULL) { // If subRoot is NULL, it doest not exist in the Tree.
+    return NULL;
+  } else {
+    //printf("Looking at the symbol: %s \n", subRoot -> var);
+    //printf("Target is: %s \n", Temp);
+    if (strcmp(subRoot -> var, Temp) == 0) {
+      return subRoot; // subRoot equals the Target.
+    } else if (strcmp(subRoot -> var, Temp) < 0) {
+      return RecursiveSearch(subRoot -> right, Temp);
+    } else if (strcmp(subRoot -> var, Temp) > 0) {
+      return RecursiveSearch(subRoot -> left, Temp);
+    }
+  }
+}
+
+//Full Stack Search
+void Search(char String[]) {
+  int j = i;
+  int x = 0;
+  if (i<0) { //Check if stack is empty.
+    //printf("Message: Stack is empty. Please push a tree onto the stack.\n");
+    //Question();
+  } else {
+    node_t * outcome;
+    //printf("Enter Sting you would like to search: \n");
+    //scanf("%s", String);
+    while(j > -1) { //Search from Top-Down on the stack.
+      outcome = RecursiveSearch(arr[j].Root, String);// Outcome points to RecursiveSearch.
+      if (outcome != NULL) { // If outcome does not equal NULL the target word was found.
+        //printf("Message: The symbol %s was found in the tree %s. \n", String, arr[j].Key);
+        //printf("Message: The symbol %s was found in the position %d from the top of the stack. \n", String, x);
+        //Question();
+      }
+      x++;
+      j--;
+    }
+    outcome = NULL;
+    //printf("Message: The symbol %s does not exist in the stack. \n", String);
+    //Question();
+	
+  }
+}
+
+
+/* depth-first search */
+void printDFS(node_t * current) {
+  /* change the code here */
+  if (current == NULL)         return;   /* security measure */
+  if (current -> left != NULL)   printDFS(current->left);
+  if (current != NULL)         printf("%s ", current -> var);
+  if (current->right != NULL)  printDFS(current->right);
+}
