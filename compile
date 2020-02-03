@@ -3,7 +3,9 @@
 lex_file="ada.l"
 yacc_file="ada.y"
 output="test"
-input="./TESTS/mixed.ada"
+echo File name:
+read name
+input="./TESTS/$name"
 
 yacc -d -v $yacc_file
 echo "Compiling $yacc_file"
