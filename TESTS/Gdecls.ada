@@ -16,7 +16,7 @@ procedure Main is
 
 
 begin
-   B := 5 + 4 * 3;
+   B := 5 + 4;
    X := X**Y;
    X := X and Y;
    Y := X or Y;
